@@ -3,11 +3,7 @@
 {% block title %}Edit your account{% endblock %}
 
 {% block content %}
-  {% if done %}
-    <h1>{{ done }}</h1>
-  {% else %}
-    <h1>Edit your account</h1>
-  {% endif %}
+  <h1>Edit your account</h1>
   <p>You can edit your account using the following form:</p>
   <form method="post" enctype="multipart/form-data"> <!-- multipart/form-data for import files -->
     {{ user_form.as_p }}
