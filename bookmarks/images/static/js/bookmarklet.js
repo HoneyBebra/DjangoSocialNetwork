@@ -40,39 +40,37 @@ function bookmarkletLaunch() {
     images = document.querySelectorAll(
         'img[src$=".jpg"], img[src$=".jpeg"], img[src$=".png"]'
     );
-    images.forEach(  // Cycle
-        image => {
-            if(
-                image.naturalWidth >= minWidth &&
-                image.naturalHeight >= minHeight
-            )
-            {
-                var imageFound = document.createElement('img');
-                imageFound.src = image.src;
-                imagesFound.append(imageFound);
-            }
+
+    // Cycle
+    images.forEach(image => {
+        if(
+            image.naturalWidth >= minWidth &&
+            image.naturalHeight >= minHeight
+        )
+        {
+            var imageFound = document.createElement('img');
+            imageFound.src = image.src;
+            imagesFound.append(imageFound);
         }
-    )
+    })
 
     // Select image
-    imagesFound.querySelectorAll('img').forEach(
-        image => {
-            image.addEventListener(
-                'click',
-                function(event) {
-                    imageSelected = event.target;
-                    bookmarklet.style.display = 'none';
-                    window.open(
-                        siteUrl + 'images/create/?url=' +
-                        encodeURIComponent(imageSelected.src) +
-                        '&title=' +
-                        encodeURIComponent(document.title),
-                        '_blank'
-                    );
-                }
-            )
-        }
-    )
+    imagesFound.querySelectorAll('img').forEach(image => {
+        image.addEventListener(
+            'click',
+            function(event) {
+                imageSelected = event.target;
+                bookmarklet.style.display = 'none';
+                window.open(
+                    siteUrl + 'images/create/?url=' +
+                    encodeURIComponent(imageSelected.src) +
+                    '&title=' +
+                    encodeURIComponent(document.title),
+                    '_blank'
+                );
+            }
+        )
+    })
 }
 
 // Start bookmarklet
