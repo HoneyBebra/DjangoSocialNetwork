@@ -19,14 +19,6 @@ def dashboard(request):
     )
 
 
-def images(request):
-    return render(
-        request,
-        'account/images.html',
-        {'section': 'images'}
-    )
-
-
 def people(request):
     return render(
         request,
