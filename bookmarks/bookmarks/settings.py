@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+from django.urls import reverse_lazy
 
 load_dotenv()
 
@@ -167,3 +168,9 @@ SOCIAL_AUTH_PIPELINE = [
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 ]
+
+ABSOLUTE_URL_OVERRIDES = {  # automatically adding get_absolute_url() to the model
+    'auth.user': lambda u: reverse_lazy(
+        'user.detail', args=[u.username]
+    )
+}
