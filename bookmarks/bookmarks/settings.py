@@ -171,6 +171,6 @@ SOCIAL_AUTH_PIPELINE = [
 
 ABSOLUTE_URL_OVERRIDES = {  # automatically adding get_absolute_url() to the model
     'auth.user': lambda u: reverse_lazy(
-        'user.detail', args=[u.username]
+        'user_detail', args=[u.username]
     )
 }
