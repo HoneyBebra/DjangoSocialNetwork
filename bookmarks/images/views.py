@@ -8,9 +8,19 @@ from django.http import JsonResponse, HttpResponse
 from django.core.paginator import (
     Paginator, EmptyPage, PageNotAnInteger
 )
+import redis
+from django.conf import settings
 
 from .models import Image
 from actions.utils import create_action
+
+
+# connection to redis
+r = redis.Redis(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    db=settings.REDIS_DB
+)
 
 
 @login_required
@@ -57,12 +67,15 @@ def image_like(request):
 
 def image_detail(request, image_id, slug):
     image = get_object_or_404(Image, id=image_id, slug=slug)
+    total_views = r.incr(f'image:{image.id}:views')  # incr: += 1
+    r.zincrby('image_ranking', 1, image.id)  # Adds +1 to image_rank, sorted by rank
     return render(
         request,
         'images/image/detail.html',
         {
             'section': 'images',
-            'image': image
+            'image': image,
+            'total_views': total_views
         }
     )
 
@@ -97,5 +110,29 @@ def image_list(request):
         {
             'section': 'images',
             'images': images
+        }
+    )
+
+
+@login_required
+def image_ranking(request):
+    images_ranking = r.zrange(
+        'image_ranking',
+        0, -1,
+        desc=True
+    )[:10]
+
+    images_ranking_ids = [int(image_id) for image_id in images_ranking]
+    most_viewed = list(
+        Image.objects.filter(id__in=images_ranking_ids)
+    )
+    most_viewed.sort(key=lambda x: images_ranking_ids.index(x.id))
+
+    return render(
+        request,
+        'images/image/ranking.html',
+        {
+            'section': 'images',
+            'most_viewed': most_viewed
         }
     )
