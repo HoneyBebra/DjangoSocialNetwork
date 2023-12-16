@@ -10,6 +10,7 @@ from django.core.paginator import (
 )
 
 from .models import Image
+from actions.utils import create_action
 
 
 @login_required
@@ -20,10 +21,8 @@ def image_create(request):
             new_image = form.save(commit=False)
             new_image.user = request.user
             new_image.save()
-            messages.success(
-                request,
-                'Image added successfully'
-            )
+            create_action(request.user, 'bookmarket image', new_image)
+            messages.success(request, 'Image added successfully')
             return redirect(new_image.get_absolute_url())
     else:
         form = ImageCreateForm(data=request.GET)
@@ -47,6 +46,7 @@ def image_like(request):
             image = Image.objects.get(id=image_id)
             if action == 'like':
                 image.users_like.add(request.user)
+                create_action(request.user, 'like', image)
             else:
                 image.users_like.remove(request.user)
             return JsonResponse({'status': 'ok'})
